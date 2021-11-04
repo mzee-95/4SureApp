@@ -1,0 +1,104 @@
+import React from 'react';
+import InputField from './InputField'
+import SubmitButton from './SubmitButton'
+import UserActivity from './stores/UserActivity';
+import axios from 'axios';
+
+class SearchUserActivity extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: '',
+            buttonDisable: false
+        }
+    }
+
+    setInputValue(property, val) {
+        val = val.trim();
+        if (val.length > 20) {
+            return;
+        }
+        this.setState({
+            [property]: val
+        })
+    }
+
+    resetForm() {
+        this.setState({
+            username: '',
+            buttonDisable: false
+        })
+    }
+
+    async doSearch() {
+
+        if (!this.state.username) {
+            return;
+        }
+        this.setState({
+            buttonDisable: true
+        })
+
+        try {
+            let res = await axios.post(
+                "https://localhost:5001/search/SearchUserActivity?username=" + this.state.username,
+                JSON.stringify({
+                    username: this.state.username
+                }), {
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS'
+                }
+            }
+            ).then(resp => {
+                
+                if (resp.status === 202 || resp.status === 200) {
+                    try {
+                        //const users = JSON.parse(resp.data);
+                        //debugger;
+                        UserActivity.updateStateItems(resp.data.login, resp.data)
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
+                }
+                else {
+                    this.resetForm();
+                    alert(resp.msg);
+                }
+            }).catch(error => {
+                this.resetForm();
+                alert(error.msg);
+            });
+
+
+        }
+        catch (e) {
+            console.log(e);
+            this.resetForm();
+        }
+        console.log(userStore);
+    }
+
+    render() {
+        return (
+            <div className="searchForm">
+                <InputField
+                    type='text'
+                    placeholder='Username'
+                    value={this.state.username ? this.state.username : ''}
+                    onChange={(val) => this.setInputValue('username', val)}
+                />
+
+                <SubmitButton
+                    text='Search'
+                    disabled={this.state.buttonDisable}
+                    onClick={() => this.doSearch()}
+                />
+            </div>
+        );
+    }
+}
+
+export default SearchUserActivity;

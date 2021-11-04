@@ -1,0 +1,22 @@
+.wrapper-two-col {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(635px, 1fr) ) ;
+  }
+  
+  .wrapper-three-col {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr) ) ;
+  }
+  
+  .wrapper-four-col {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr) ) ;
+  }
+  
+  .column {
+    padding: 20px;
+  }
+  
